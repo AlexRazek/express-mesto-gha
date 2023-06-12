@@ -1,0 +1,23 @@
+{
+  "name": "express-mesto-gha",
+  "version": "1.0.0",
+  "description": "# Проект Mesto фронтенд + бэкенд Продолжение проекта Место",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "Alex",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.2.3"
+  }
+}
