@@ -1,8 +1,11 @@
+const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
+const { CREATED, SUCCESS } = require('../utils/success');
+
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users));
+    .then((users) => res.status(SUCCESS).send(users));
 };
 
 const getUserById = (req, res) => {
@@ -10,12 +13,12 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'User not found' });
+        return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(200).send(user);
+      return res.status(SUCCESS).send(user);
     })
     .catch(() => {
-      res.status(500).send({ message: 'Server Error' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
@@ -24,16 +27,16 @@ const createUser = (req, res) => {
   // console.log(req.body);
   User.create({ name, about, avatar })
     .then((newUser) => {
-      res.status(201).send(newUser);
+      res.status(CREATED).send(newUser);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({
+        return res.status(BAD_REQUEST).send({
           // eslint-disable-next-line no-shadow
           message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
-      return res.status(500).send({ message: 'Server Error' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
@@ -44,9 +47,23 @@ const updateUserProfile = (req, res) => {
     req.user._id,
     { name, about },
     { new: true },
+    { runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(NOT_FOUND).send({
+          // eslint-disable-next-line no-shadow
+          message: 'Пользователь с указанным _id не найден',
+        });
+      } if (err.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({
+          // eslint-disable-next-line no-shadow
+          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -57,7 +74,20 @@ const updateUserAvatar = (req, res) => {
     { new: true },
   )
     .then((userAvatar) => res.send({ userAvatar }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({
+          // eslint-disable-next-line no-shadow
+          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+        });
+      } else if (err.name === 'CastError') {
+        res.status(NOT_FOUND).send({
+          // eslint-disable-next-line no-shadow
+          message: 'Пользователь с указанным _id не найден',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 module.exports = {

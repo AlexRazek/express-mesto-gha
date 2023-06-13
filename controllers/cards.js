@@ -1,8 +1,14 @@
+const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
+const { CREATED, SUCCESS } = require('../utils/success');
+
 const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards));
+    .then((cards) => res.status(SUCCESS).send(cards))
+    .catch(() => {
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 const createCard = (req, res) => {
@@ -10,23 +16,31 @@ const createCard = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((newCard) => {
-      res.status(201).send(newCard);
+      res.status(CREATED).send(newCard);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({
+        return res.status(BAD_REQUEST).send({
           // eslint-disable-next-line no-shadow
           message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
-      return res.status(500).send({ message: 'Server Error' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
 const deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(NOT_FOUND).send({
+          // eslint-disable-next-line no-shadow
+          message: 'Карточка с указанным _id не найдена',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 const likeCard = (req, res) => {
@@ -36,7 +50,15 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({
+          // eslint-disable-next-line no-shadow
+          message: 'Переданы некорректные данные для постановки/снятии лайка',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -46,7 +68,15 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(NOT_FOUND).send({
+          // eslint-disable-next-line no-shadow
+          message: 'Передан несуществующий _id карточки',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 module.exports = {
