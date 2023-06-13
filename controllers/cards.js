@@ -21,8 +21,9 @@ const createCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при создании карточки',
           // eslint-disable-next-line no-shadow
-          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });

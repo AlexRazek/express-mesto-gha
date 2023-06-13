@@ -32,8 +32,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при создании пользователя',
           // eslint-disable-next-line no-shadow
-          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
@@ -58,8 +59,8 @@ const updateUserProfile = (req, res) => {
         });
       } if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({
-          // eslint-disable-next-line no-shadow
-          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+          message: 'Переданы некорректные данные при обновлении профиля',
+          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
@@ -71,14 +72,14 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    // { new: true },
   )
     .then((userAvatar) => res.send({ userAvatar }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({
-          // eslint-disable-next-line no-shadow
-          message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
+          message: 'Переданы некорректные данные при обновлении аватара',
+          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       } else if (err.name === 'CastError') {
         res.status(NOT_FOUND).send({
