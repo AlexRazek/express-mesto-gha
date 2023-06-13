@@ -27,7 +27,6 @@ const getUserById = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  // console.log(req.body);
   User.create({ name, about, avatar })
     .then((newUser) => {
       res.status(CREATED).send(newUser);
@@ -45,22 +44,16 @@ const createUser = (req, res) => {
 };
 
 const updateUserProfile = (req, res) => {
-  // console.log(req);
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true },
+    { new: true },
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      // } else if (err.name === 'CastError') {
-      //   res.status(NOT_FOUND).send({
-      //     // eslint-disable-next-line no-shadow
-      //     message: 'Пользователь с указанным _id не найден',
-      //   });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
@@ -71,7 +64,7 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true },
+    { new: true },
   )
     .then((userAvatar) => res.send({
       _id: userAvatar._id,
@@ -83,13 +76,7 @@ const updateUserAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные при обновлении аватара',
-          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
-      // } else (err.name === 'CastError') {
-      //     res.status(NOT_FOUND).send({
-      //     // eslint-disable-next-line no-shadow
-      //     message: 'Пользователь с указанным _id не найден',
-      //   });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
