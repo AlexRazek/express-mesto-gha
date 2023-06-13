@@ -50,7 +50,7 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send({ card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({
@@ -68,7 +68,7 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send({ card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(NOT_FOUND).send({

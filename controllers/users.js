@@ -17,8 +17,11 @@ const getUserById = (req, res) => {
       }
       return res.status(SUCCESS).send(user);
     })
-    .catch(() => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Передан неверный тип _id' });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
@@ -52,15 +55,12 @@ const updateUserProfile = (req, res) => {
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(NOT_FOUND).send({
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      } else if (err.name === 'CastError') {
+        res.status(NOT_FOUND).send({
           // eslint-disable-next-line no-shadow
           message: 'Пользователь с указанным _id не найден',
-        });
-      } if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные при обновлении профиля',
-          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
@@ -72,9 +72,14 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    // { new: true },
+    { new: true },
   )
-    .then((userAvatar) => res.send({ userAvatar }))
+    .then((userAvatar) => res.send({
+      _id: userAvatar._id,
+      avatar: userAvatar.avatar,
+      name: userAvatar.name,
+      about: userAvatar.about,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({
