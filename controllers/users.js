@@ -49,6 +49,7 @@ const updateUserProfile = (req, res) => {
     req.user._id,
     { name, about },
     { new: true },
+    { runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
@@ -65,6 +66,7 @@ const updateUserAvatar = (req, res) => {
     req.user._id,
     { avatar },
     { new: true },
+    { runValidators: true },
   )
     .then((userAvatar) => res.send({
       _id: userAvatar._id,
