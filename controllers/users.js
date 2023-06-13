@@ -48,8 +48,7 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true },
-    { runValidators: true },
+    { new: true, runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
@@ -65,8 +64,7 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
-    { runValidators: true },
+    { new: true, runValidators: true },
   )
     .then((userAvatar) => res.send({
       _id: userAvatar._id,
