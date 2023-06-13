@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const { NOT_FOUND } = require('./utils/errors');
+
 const app = express();
 
 // app.get('/', (req, res) => {
@@ -31,6 +33,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use('/users', routerUser);
 app.use('/cards', routerCard);
+
+app.all('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
 
 // подключаем мидлвары, роуты и всё остальное...
 

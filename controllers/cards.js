@@ -34,7 +34,7 @@ const deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.status(SUCCESS).send({ card });
+        res.status(SUCCESS).send({ data: card });
       } else {
         res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       }
@@ -58,7 +58,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.status(SUCCESS).send({ card });
+        res.status(SUCCESS).send({ cardData: card });
       } else {
         res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
       }
@@ -82,7 +82,7 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.status(SUCCESS).send({ card });
+        res.status(SUCCESS).send({ data: card });
       } else {
         res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
       }
