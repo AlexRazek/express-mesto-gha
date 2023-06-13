@@ -30,11 +30,12 @@ app.use((req, res, next) => {
   };
   next();
 });
+
 app.use(express.json());
 app.use('/users', routerUser);
 app.use('/cards', routerCard);
 
-// app.use('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
+app.use((req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
 
 // подключаем мидлвары, роуты и всё остальное...
 
