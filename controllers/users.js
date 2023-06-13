@@ -50,18 +50,17 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true },
-    { runValidators: true },
+    { new: true, runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      } else if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({
-          // eslint-disable-next-line no-shadow
-          message: 'Пользователь с указанным _id не найден',
-        });
+      // } else if (err.name === 'CastError') {
+      //   res.status(NOT_FOUND).send({
+      //     // eslint-disable-next-line no-shadow
+      //     message: 'Пользователь с указанным _id не найден',
+      //   });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
@@ -72,7 +71,7 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((userAvatar) => res.send({
       _id: userAvatar._id,
@@ -86,11 +85,11 @@ const updateUserAvatar = (req, res) => {
           message: 'Переданы некорректные данные при обновлении аватара',
           // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
-      } else if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({
-          // eslint-disable-next-line no-shadow
-          message: 'Пользователь с указанным _id не найден',
-        });
+      // } else (err.name === 'CastError') {
+      //     res.status(NOT_FOUND).send({
+      //     // eslint-disable-next-line no-shadow
+      //     message: 'Пользователь с указанным _id не найден',
+      //   });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
