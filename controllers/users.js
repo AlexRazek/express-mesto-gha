@@ -10,7 +10,7 @@ const User = require('../models/user');
 //   return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
 // }
 
-function catchResponse(err, res) {
+function catchResponse(res, err) {
   if (err.name === 'CastError') {
     return res.status(BAD_REQUEST).send({
       message: 'Переданы некорректные данные для обновления аватара/профиля',
@@ -67,9 +67,7 @@ const updateUserProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
-    .catch((err) => {
-      catchResponse(res, err);
-    });
+    .catch((err) => catchResponse(res, err));
   //   if (err.name === 'ValidationError') {
   //     res.status(BAD_REQUEST).send({
   //  message: 'Переданы некорректные данные при обновлении профиля' });
@@ -91,9 +89,7 @@ const updateUserAvatar = (req, res) => {
       name: userAvatar.name,
       about: userAvatar.about,
     }))
-    .catch((err) => {
-      catchResponse(res, err);
-    });
+    .catch((err) => catchResponse(res, err));
   //   if (err.name === 'ValidationError') {
   //     res.status(BAD_REQUEST).send({
   //       message: 'Переданы некорректные данные при обновлении аватара',
