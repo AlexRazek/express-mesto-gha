@@ -61,12 +61,6 @@ const updateUserProfile = (req, res) => {
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => catchResponse(err, res));
-  //   if (err.name === 'ValidationError') {
-  //     res.status(BAD_REQUEST).send({
-  //  message: 'Переданы некорректные данные при обновлении профиля' });
-  //   }
-  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -83,13 +77,6 @@ const updateUserAvatar = (req, res) => {
       about: userAvatar.about,
     }))
     .catch((err) => catchResponse(err, res));
-  //   if (err.name === 'ValidationError') {
-  //     res.status(BAD_REQUEST).send({
-  //       message: 'Переданы некорректные данные при обновлении аватара',
-  //     });
-  //   }
-  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 module.exports = {

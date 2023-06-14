@@ -73,21 +73,9 @@ const likeCard = (req, res) => {
     .then((card) => {
       thenResponse(res, card);
     })
-    //   if (card) {
-    //     return res.status(SUCCESS).send({ card });
-    //   }
-    //   return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
-    // })
     .catch((err) => {
       catchResponse(res, err);
     });
-  //   if (err.name === 'CastError') {
-  //     return res.status(BAD_REQUEST).send({
-  //       message: 'Переданы некорректные данные для постановки лайка',
-  //     });
-  //   }
-  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 const dislikeCard = (req, res) => {
@@ -99,21 +87,9 @@ const dislikeCard = (req, res) => {
     .then((card) => {
       thenResponse(res, card);
     })
-    //   if (card) {
-    //     return res.status(SUCCESS).send({ card });
-    //   }
-    //   return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
-    // })
     .catch((err) => {
       catchResponse(res, err);
     });
-  //   if (err.name === 'CastError') {
-  //     return res.status(BAD_REQUEST).send({
-  //       message: 'Переданы некорректные данные для снятия лайка',
-  //     });
-  //   }
-  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 module.exports = {
