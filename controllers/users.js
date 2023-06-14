@@ -4,7 +4,7 @@ const { CREATED, SUCCESS } = require('../utils/success');
 const User = require('../models/user');
 
 function catchResponse(err, res) {
-  if (err.name === 'CastError') {
+  if (err.name === 'ValidationError') {
     return res.status(BAD_REQUEST).send({
       message: 'Переданы некорректные данные для обновления аватара/профиля',
     });

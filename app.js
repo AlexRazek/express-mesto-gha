@@ -20,9 +20,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 // .env оставлен открытым, т.к. тесты не видят
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-});
+// mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+// });
 
 app.use((req, res, next) => {
   req.user = {
