@@ -10,7 +10,7 @@ const User = require('../models/user');
 //   return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
 // }
 
-function catchResponse(res, err) {
+function catchResponse(err, res) {
   if (err.name === 'CastError') {
     return res.status(BAD_REQUEST).send({
       message: 'Переданы некорректные данные для обновления аватара/профиля',
