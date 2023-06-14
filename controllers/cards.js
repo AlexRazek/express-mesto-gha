@@ -7,7 +7,7 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.status(SUCCESS).send(cards))
     .catch(() => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -26,7 +26,7 @@ const createCard = (req, res) => {
           // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
         });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -44,7 +44,7 @@ const deleteCardById = (req, res) => {
           message: 'Переданы некорретные данные',
         });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -66,7 +66,7 @@ const likeCard = (req, res) => {
           message: 'Переданы некорректные данные для постановки лайка',
         });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -88,7 +88,7 @@ const dislikeCard = (req, res) => {
           message: 'Переданы некорректные данные для снятия лайка',
         });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
