@@ -3,6 +3,22 @@ const { CREATED, SUCCESS } = require('../utils/success');
 
 const User = require('../models/user');
 
+// function thenResponse(res, card) {
+//   if (card) {
+//     return res.status(SUCCESS).send({ card });
+//   }
+//   return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+// }
+
+function catchResponse(res, err) {
+  if (err.name === 'CastError') {
+    return res.status(BAD_REQUEST).send({
+      message: 'Переданы некорректные данные для обновления аватара/профиля',
+    });
+  }
+  return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+}
+
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(SUCCESS).send(users));
@@ -52,11 +68,14 @@ const updateUserProfile = (req, res) => {
   )
     .then((userProfile) => res.send({ userProfile }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      catchResponse(res, err);
     });
+  //   if (err.name === 'ValidationError') {
+  //     res.status(BAD_REQUEST).send({
+  //  message: 'Переданы некорректные данные при обновлении профиля' });
+  //   }
+  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+  // });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -73,13 +92,15 @@ const updateUserAvatar = (req, res) => {
       about: userAvatar.about,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные при обновлении аватара',
-        });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      catchResponse(res, err);
     });
+  //   if (err.name === 'ValidationError') {
+  //     res.status(BAD_REQUEST).send({
+  //       message: 'Переданы некорректные данные при обновлении аватара',
+  //     });
+  //   }
+  //   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+  // });
 };
 
 module.exports = {

@@ -14,12 +14,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// код ниже оставлен по причине того, что тесты не видят mondoDB URI, спрятанную в .env
-// mongoose.connect('mongodb://localhost:27017/mestodb', {
-//   useNewUrlParser: true,
-// });
-
-// убрал mondoDB URI в .env, но тесты не видят
+// .env оставлен открытым, т.к. тесты не видят
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
 });
