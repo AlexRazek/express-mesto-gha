@@ -13,7 +13,7 @@ function thenResponse(res, card) {
 function catchResponse(res, err) {
   if (err.name === 'CastError') {
     return res.status(BAD_REQUEST).send({
-      message: 'Переданы некорректные данные для снятия лайка',
+      message: 'Переданы некорректные данные для постановки/снятия лайка',
     });
   }
   return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
