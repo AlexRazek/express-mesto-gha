@@ -46,8 +46,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 //   next();
 // });
 
-app.post('/signin', auth, login);
-app.post('/signup', auth, celebrate({
+app.post('/signin', login);
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -57,8 +57,8 @@ app.post('/signup', auth, celebrate({
   }),
 }), createUser);
 
-app.use('/users', routerUser);
-app.use('/cards', routerCard);
+app.use('/users', auth, routerUser);
+app.use('/cards', auth, routerCard);
 app.all('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
 app.use(errors());
 app.use(errorHandler);
