@@ -16,17 +16,17 @@ const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 const ConflictRequest = require('../utils/errors/conflict-request-error');
 
-function catchResponse(err, res, next) {
-  if (err.name === 'ValidationError') {
-    next(new BadRequestError('Переданы некорректные данные для обновления аватара/профиля'));
-    // return res.status(BAD_REQUEST).send({
-    //   message: 'Переданы некорректные данные для обновления аватара/профиля',
-    // });
-  } else {
-    next(err);
-  }
-  // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-}
+// function catchResponse(err, res, next) {
+//   if (err.name === 'ValidationError') {
+//     next(new BadRequestError('Переданы некорректные данные для обновления аватара/профиля'));
+//     // return res.status(BAD_REQUEST).send({
+//     //   message: 'Переданы некорректные данные для обновления аватара/профиля',
+//     // });
+//   } else {
+//     next(err);
+//   }
+//   // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+// }
 
 const getUsers = (req, res) => {
   User.find({})
@@ -119,7 +119,17 @@ const updateUserProfile = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
-    .catch((err) => catchResponse(err, res, next));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные для обновления профиля'));
+        // return res.status(BAD_REQUEST).send({
+        //   message: 'Переданы некорректные данные для обновления аватара/профиля',
+        // });
+      } else {
+        next(err);
+      }
+    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const updateUserAvatar = (req, res, next) => {
@@ -135,7 +145,17 @@ const updateUserAvatar = (req, res, next) => {
       name: userAvatar.name,
       about: userAvatar.about,
     }))
-    .catch((err) => catchResponse(err, res, next));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные для обновления аватара'));
+        // return res.status(BAD_REQUEST).send({
+        //   message: 'Переданы некорректные данные для обновления аватара/профиля',
+        // });
+      } else {
+        next(err);
+      }
+    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports = {

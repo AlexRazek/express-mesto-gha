@@ -13,9 +13,6 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (isValid) => validator.isURL(isValid),
-      // validator(v) {
-      //   return /^\S+@\S+\.\S+$/.test(v);
-      // },
       message: 'Почта введена не корректно',
     },
   },
