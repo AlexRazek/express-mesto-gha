@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res
       .status(401)
-      .send({ message: 'Необходима авторизация' });
+      .send({ message: 'Необходима авторизация, Вас нет в базе' });
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res
       .status(401)
-      .send({ message: 'Необходима авторизация' });
+      .send({ message: 'Необходима авторизация, туту' });
   }
 
   req.user = payload; // записываем пейлоуд в объект запроса

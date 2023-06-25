@@ -1,3 +1,4 @@
+require('dotenv').config();
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
 const {
@@ -5,7 +6,11 @@ const {
 } = require('../utils/errors');
 const { CREATED, SUCCESS } = require('../utils/success');
 
-const { JWT_SECRET, SALT_ROUNDS } = process.env;
+const SALT_ROUNDS = 10;
+
+const { JWT_SECRET } = process.env;
+// eslint-disable-next-line no-console
+// console.log(JWT_SECRET);
 
 const User = require('../models/user');
 
@@ -52,16 +57,20 @@ const login = (req, res) => {
     .then((user) => {
       // создадим токен
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      // eslint-disable-next-line no-console
+      console.log(process.env.JWT_SECRET);
       // отправим токен, браузер сохранит его в куках
       res
         .cookie('jwt', token, {
           // token - наш JWT токен, который мы отправляем
           maxAge: 3600000,
           httpOnly: true,
-        })
-        .end(); // если у ответа нет тела, можно использовать метод end
+        });
+      // .end(); // если у ответа нет тела, можно использовать метод end
       // вернём токен
       res.send({ token });
+      // eslint-disable-next-line no-console
+      console.log(req.cookies.jwt);
     })
     .catch(() => {
       res.status(UNAUTHORIZED).send({ message: 'Передан неверный логин или пароль' });
