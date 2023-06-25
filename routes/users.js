@@ -24,7 +24,7 @@ routerUser.patch('/me', celebrate({
 
 routerUser.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    about: Joi.link().required(),
+    about: Joi.string().required(),
   }),
 }), updateUserAvatar);
 
