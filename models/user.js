@@ -20,11 +20,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator(v) {
+        // eslint-disable-next-line no-useless-escape
+        return /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(v);
+      },
+      message: 'Некорректная ссылка на аватар',
+    },
   },
   email: {
     type: String,
     unique: true,
     required: true,
+    validate: {
+      validator(v) {
+        return /^\S+@\S+\.\S+$/.test(v);
+      },
+      message: 'Почта введена не корректно',
+    },
   },
   password: {
     type: String,

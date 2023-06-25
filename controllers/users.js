@@ -18,7 +18,7 @@ const ConflictRequest = require('../utils/errors/conflict-request-error');
 
 function catchResponse(err, next) {
   if (err.name === 'ValidationError') {
-    throw new BadRequestError('Переданы некорректные данные для обновления аватара/профиля');
+    next(new BadRequestError('Переданы некорректные данные для обновления аватара/профиля'));
     // return res.status(BAD_REQUEST).send({
     //   message: 'Переданы некорректные данные для обновления аватара/профиля',
     // });
@@ -38,7 +38,7 @@ const getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден');
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       // return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res.status(SUCCESS).send(user);
@@ -96,7 +96,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         throw new ConflictRequest('При регистрации указан email, который уже существует на сервере');
       } else if (err.name === 'ValidationError') {
-        throw new NotFoundError('Переданы некорректные данные при создании пользователя');
+        next(new NotFoundError('Переданы некорректные данные при создании пользователя'));
         //     return res.status(BAD_REQUEST).send({
         //       message: 'Переданы некорректные данные при создании пользователя',
         //     });

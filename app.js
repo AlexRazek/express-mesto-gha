@@ -9,7 +9,7 @@ const { createUser, login } = require('./controllers/users');
 
 const { NOT_FOUND } = require('./utils/errors/errors');
 
-const { PORT, MONGO_URI } = process.env;
+const { PORT } = process.env;
 
 const app = express();
 
@@ -34,9 +34,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 // MongoDB URL в .env поместил:
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-});
+// mongoose.connect(MONGO_URI, {
+//   useNewUrlParser: true,
+// });
 
 // app.use((req, res, next) => {
 //   req.user = {

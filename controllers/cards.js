@@ -53,7 +53,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки'));
       } else {
         next(err);
       }
@@ -62,16 +62,17 @@ const createCard = (req, res, next) => {
 
 const deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
+    // eslint-disable-next-line consistent-return
     .then((card) => {
       if (card) {
         return res.status(SUCCESS).send({ card });
       }
-      throw new NotFoundError('Карточка с указанным _id не найдена');
+      next(new NotFoundError('Карточка с указанным _id не найдена'));
       // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
