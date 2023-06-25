@@ -1,5 +1,11 @@
-const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
+const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const jwt = require('jsonwebtoken');
+const {
+  BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED,
+} = require('../utils/errors');
 const { CREATED, SUCCESS } = require('../utils/success');
+
+const { JWT_SECRET, SALT_ROUNDS } = process.env;
 
 const User = require('../models/user');
 
@@ -34,9 +40,43 @@ const getUserById = (req, res) => {
     });
 };
 
+// const token = jwt.sign(
+//   { _id: user._id },
+//   NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'
+// );
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      // отправим токен, браузер сохранит его в куках
+      res
+        .cookie('jwt', token, {
+          // token - наш JWT токен, который мы отправляем
+          maxAge: 3600000,
+          httpOnly: true,
+        })
+        .end(); // если у ответа нет тела, можно использовать метод end
+      // вернём токен
+      res.send({ token });
+    })
+    .catch(() => {
+      res.status(UNAUTHORIZED).send({ message: 'Передан неверный логин или пароль' });
+    });
+};
+
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  // хешируем пароль
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((newUser) => {
       res.status(CREATED).send(newUser);
     })
@@ -85,4 +125,5 @@ module.exports = {
   createUser,
   updateUserProfile,
   updateUserAvatar,
+  login,
 };
