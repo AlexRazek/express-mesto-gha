@@ -29,9 +29,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // connect оставил как есть, т.к. из .env тесты не видят mondoDB URL
-// mongoose.connect('mongodb://localhost:27017/mestodb', {
-//   useNewUrlParser: true,
-// });
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+});
 
 // MongoDB URL в .env поместил:
 mongoose.connect(MONGO_URI, {
