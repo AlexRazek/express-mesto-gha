@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   console.log(req.headers.authorization);
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new Unauthorized('Передан неверный логин или пароль');
+    next(new Unauthorized('Передан неверный логин или пароль'));
     // return res
     //   .status(401)
     //   .send({ message: 'Необходима авторизация, Вас нет в базе' });
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
     // eslint-disable-next-line no-console
     console.log(payload);
   } catch (err) {
-    throw new Unauthorized('Передан неверный логин или пароль');
+    next(new Unauthorized('Передан неверный логин или пароль'));
     // return res
     //   .status(401)
     //   .send({ message: 'Необходима авторизация, тут' });

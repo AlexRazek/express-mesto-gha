@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const validator = require('validator'); // импортируем validator
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,6 +22,7 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
+      // validator: (isValid) => validator.isUrl(isValid),
       validator(v) {
         // eslint-disable-next-line no-useless-escape
         return /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/.test(v);
@@ -33,9 +35,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
     validate: {
-      validator(v) {
-        return /^\S+@\S+\.\S+$/.test(v);
-      },
+      validator: (isValid) => validator.isEmail(isValid),
+      // validator(v) {
+      //   return /^\S+@\S+\.\S+$/.test(v);
+      // },
       message: 'Почта введена не корректно',
     },
   },

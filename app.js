@@ -1,11 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const auth = require('./middlewares/auth');
-
+const mongoose = require('mongoose');
+const { celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { NOT_FOUND } = require('./utils/errors/errors');
 
@@ -45,14 +46,21 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 //   next();
 // });
 
-app.post('/signin', login);
-app.post('/signup', createUser);
-
-app.use(auth);
+app.post('/signin', auth, login);
+app.post('/signup', auth, celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}), createUser);
 
 app.use('/users', routerUser);
 app.use('/cards', routerCard);
 app.all('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

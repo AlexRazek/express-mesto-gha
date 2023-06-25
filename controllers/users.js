@@ -16,7 +16,7 @@ const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 const ConflictRequest = require('../utils/errors/conflict-request-error');
 
-function catchResponse(err, next) {
+function catchResponse(err, res, next) {
   if (err.name === 'ValidationError') {
     next(new BadRequestError('Переданы некорректные данные для обновления аватара/профиля'));
     // return res.status(BAD_REQUEST).send({
@@ -94,9 +94,9 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictRequest('При регистрации указан email, который уже существует на сервере');
+        next(new ConflictRequest('При регистрации указан email, который уже существует на сервере'));
       } else if (err.name === 'ValidationError') {
-        next(new NotFoundError('Переданы некорректные данные при создании пользователя'));
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
         //     return res.status(BAD_REQUEST).send({
         //       message: 'Переданы некорректные данные при создании пользователя',
         //     });
@@ -109,7 +109,7 @@ const createUser = (req, res, next) => {
     });
 };
 
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -117,10 +117,10 @@ const updateUserProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((userProfile) => res.send({ userProfile }))
-    .catch((err) => catchResponse(err, res));
+    .catch((err) => catchResponse(err, res, next));
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -133,7 +133,7 @@ const updateUserAvatar = (req, res) => {
       name: userAvatar.name,
       about: userAvatar.about,
     }))
-    .catch((err) => catchResponse(err, res));
+    .catch((err) => catchResponse(err, res, next));
 };
 
 module.exports = {

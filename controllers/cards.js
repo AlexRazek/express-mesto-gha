@@ -1,29 +1,13 @@
-const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors/errors');
+// const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors/errors');
 const { CREATED, SUCCESS } = require('../utils/success');
 
 const Card = require('../models/card');
 const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 
-function thenResponse(res, card) {
-  if (card) {
-    return res.status(SUCCESS).send({ card });
-  }
-  return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
-}
-
-function catchResponse(res, err) {
-  if (err.name === 'CastError') {
-    return res.status(BAD_REQUEST).send({
-      message: 'Переданы некорректные данные для постановки/снятия лайка',
-    });
-  }
-  return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-}
-
 // function thenResponse(card, err, next) {
 //   if (!card) {
-//     throw new NotFoundError('Передан несуществующий _id карточки');
+//     next(new NotFoundError('Передан несуществующий _id карточки'));
 //   } else {
 //     next(err);
 //   }
@@ -31,7 +15,7 @@ function catchResponse(res, err) {
 
 // function catchResponse(err, next) {
 //   if (err.name === 'CastError') {
-//     throw new BadRequestError('Переданы некорректные данные для постановки/снятия лайка');
+//     next(new BadRequestError('Переданы некорректные данные для постановки/снятия лайка'));
 //   }
 //   next(err);
 // }
@@ -80,31 +64,48 @@ const deleteCardById = (req, res, next) => {
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((card) => {
-      thenResponse(res, card);
+      if (!card) {
+        next(new NotFoundError('Передан несуществующий _id карточки'));
+      }
+      res.send(card);
     })
     .catch((err) => {
-      catchResponse(res, err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
+      } else {
+        next(err);
+      }
+      // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    // eslint-disable-next-line consistent-return
     .then((card) => {
-      thenResponse(res, card);
+      if (!card) {
+        return next(new NotFoundError('Передан несуществующий _id карточки'));
+      }
+      res.send(card);
     })
     .catch((err) => {
-      catchResponse(res, err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
+      } else {
+        next(err);
+      }
+      // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
