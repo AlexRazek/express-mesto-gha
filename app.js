@@ -7,7 +7,7 @@ const auth = require('./middlewares/auth');
 
 const { createUser, login } = require('./controllers/users');
 
-const { NOT_FOUND } = require('./utils/errors');
+const { NOT_FOUND } = require('./utils/errors/errors');
 
 const { PORT, MONGO_URI } = process.env;
 
@@ -22,6 +22,7 @@ app.use(cookieParser());
 
 const routerUser = require('./routes/users');
 const routerCard = require('./routes/cards');
+const errorHandler = require('./middlewares/error-handler');
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -51,8 +52,8 @@ app.use(auth);
 
 app.use('/users', routerUser);
 app.use('/cards', routerCard);
-
 app.all('*', (req, res) => res.status(NOT_FOUND).send({ message: 'Путь не существует' }));
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

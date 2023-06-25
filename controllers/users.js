@@ -1,26 +1,31 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
-const {
-  BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED,
-} = require('../utils/errors');
+// const {
+// BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED,
+// } = require('../utils/errors/errors');
+// const { UNAUTHORIZED } = require('../utils/errors/errors');
 const { CREATED, SUCCESS } = require('../utils/success');
 
 const SALT_ROUNDS = 10;
 
 const { JWT_SECRET } = process.env;
-// eslint-disable-next-line no-console
-// console.log(JWT_SECRET);
 
 const User = require('../models/user');
+const BadRequestError = require('../utils/errors/bad-request-error');
+const NotFoundError = require('../utils/errors/not-found-error');
+const ConflictRequest = require('../utils/errors/conflict-request-error');
 
-function catchResponse(err, res) {
+function catchResponse(err, next) {
   if (err.name === 'ValidationError') {
-    return res.status(BAD_REQUEST).send({
-      message: 'Переданы некорректные данные для обновления аватара/профиля',
-    });
+    throw new BadRequestError('Переданы некорректные данные для обновления аватара/профиля');
+    // return res.status(BAD_REQUEST).send({
+    //   message: 'Переданы некорректные данные для обновления аватара/профиля',
+    // });
+  } else {
+    next(err);
   }
-  return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+  // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
 }
 
 const getUsers = (req, res) => {
@@ -28,29 +33,26 @@ const getUsers = (req, res) => {
     .then((users) => res.status(SUCCESS).send(users));
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
+        throw new NotFoundError('Пользователь по указанному _id не найден');
+      // return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res.status(SUCCESS).send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: 'Передан неверный тип _id' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-    });
+    .catch(next);
+  // if (err.name === 'CastError') {
+  // throw new BadRequestError('Передан неверный тип _id');
+  //     return res.status(BAD_REQUEST).send({ message: 'Передан неверный тип _id' });
+  //   }
+  //  return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+  // });
 };
 
-// const token = jwt.sign(
-//   { _id: user._id },
-//   NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'
-// );
-
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -72,12 +74,13 @@ const login = (req, res) => {
       // eslint-disable-next-line no-console
       console.log(req.cookies.jwt);
     })
-    .catch(() => {
-      res.status(UNAUTHORIZED).send({ message: 'Передан неверный логин или пароль' });
-    });
+    .catch(next);
+  // .catch(() => {
+  // res.status(UNAUTHORIZED).send({ message: 'Передан неверный логин или пароль' });
+  // });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -90,14 +93,19 @@ const createUser = (req, res) => {
       res.status(CREATED).send(newUser);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные при создании пользователя',
-          // eslint-disable-next-line no-shadow
-          // message: `${Object.values(err.errors).map((err) => err.message).join(', ')}`,
-        });
+      if (err.code === 11000) {
+        throw new ConflictRequest('При регистрации указан email, который уже существует на сервере');
+      } else if (err.name === 'ValidationError') {
+        throw new NotFoundError('Переданы некорректные данные при создании пользователя');
+        //     return res.status(BAD_REQUEST).send({
+        //       message: 'Переданы некорректные данные при создании пользователя',
+        //     });
+        //   }
+        // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка'});
+        // });
+      } else {
+        next(err);
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
