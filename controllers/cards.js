@@ -68,15 +68,13 @@ const deleteCardById = (req, res, next) => {
     //   next(new NotFoundError('Карточка с указанным _id не найдена'));
     //   // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
     // })
-    .catch(next);
-  // .catch((err) => {
-  //   if (err.name === 'CastError') {
-  //     next(new BadRequestError('Переданы некорректные данные'));
-  //   } else {
-  //     next(err);
-  //   }
-  // // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // установка лайка
@@ -92,15 +90,13 @@ const likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next);
-  // .catch((err) => {
-  //   if (err.name === 'CastError') {
-  //     next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
-  //   } else {
-  //     next(err);
-  //   }
-  // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // удаление лайка
@@ -117,7 +113,6 @@ const dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    // .catch(next);
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
