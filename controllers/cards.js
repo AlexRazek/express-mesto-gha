@@ -52,12 +52,12 @@ const deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (!card) {
-        next(new NotFoundError('Карточка с указанным _id не найдена'));
-      } else if (card.owner !== req.user._id) {
-        next(new Forbidden('Попытка удалить чужую карточку'));
-      } else {
+      if (card) {
         return res.status(SUCCESS).send({ card });
+      } if (!card) {
+        next(new NotFoundError('Карточка с указанным _id не найдена'));
+      } if (card.owner !== req.user._id) {
+        next(new Forbidden('Попытка удалить чужую карточку'));
       }
       // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
     })
@@ -117,12 +117,14 @@ const dislikeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch(next);
-  // if (err.name === 'CastError') {
-  //   next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
-  // } else {
-  //   next(err);
-  // }
+    // .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
