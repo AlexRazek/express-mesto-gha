@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 // const validator = require('validator'); // импортируем validator

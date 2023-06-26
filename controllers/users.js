@@ -1,10 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
-// const {
-// BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED,
-// } = require('../utils/errors/errors');
-// const { UNAUTHORIZED } = require('../utils/errors/errors');
 const { CREATED, SUCCESS } = require('../utils/success');
 
 const SALT_ROUNDS = 10;
@@ -16,11 +12,13 @@ const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 const ConflictRequest = require('../utils/errors/conflict-request-error');
 
+// получение всех пользователей
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(SUCCESS).send(users));
 };
 
+// получение данных о своем id
 const getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -32,6 +30,7 @@ const getUserMe = (req, res, next) => {
     .catch(next);
 };
 
+// получение информации о пользователе по id
 const getUserById = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
@@ -50,6 +49,7 @@ const getUserById = (req, res, next) => {
     });
 };
 
+// авторизация пользователя
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -57,8 +57,6 @@ const login = (req, res, next) => {
     .then((user) => {
       // создадим токен
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      // eslint-disable-next-line no-console
-      console.log(process.env.JWT_SECRET);
       // отправим токен, браузер сохранит его в куках
       res
         .cookie('jwt', token, {
@@ -69,15 +67,11 @@ const login = (req, res, next) => {
       // .end(); // если у ответа нет тела, можно использовать метод end
       // вернём токен
       res.send({ token });
-      // eslint-disable-next-line no-console
-      console.log(req.cookies.jwt);
     })
     .catch(next);
-  // .catch(() => {
-  // res.status(UNAUTHORIZED).send({ message: 'Передан неверный логин или пароль' });
-  // });
 };
 
+// регистрация пользователя
 const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -103,6 +97,7 @@ const createUser = (req, res, next) => {
     });
 };
 
+// обновление данных Профиля пользователя
 const updateUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
@@ -114,16 +109,13 @@ const updateUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные для обновления профиля'));
-        // return res.status(BAD_REQUEST).send({
-        //   message: 'Переданы некорректные данные для обновления аватара/профиля',
-        // });
       } else {
         next(err);
       }
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
+// обновление данных Аватара пользователя
 const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
@@ -140,13 +132,9 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные для обновления аватара'));
-        // return res.status(BAD_REQUEST).send({
-        //   message: 'Переданы некорректные данные для обновления аватара/профиля',
-        // });
       } else {
         next(err);
       }
-    // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 

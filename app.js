@@ -16,11 +16,6 @@ const app = express();
 
 app.use(cookieParser());
 
-// app.get('/posts', (req) => {
-//   // eslint-disable-next-line no-console
-//   console.log(req.cookies.jwt); // достаём токен
-// });
-
 const routerUser = require('./routes/users');
 const routerCard = require('./routes/cards');
 const errorHandler = require('./middlewares/error-handler');
@@ -37,13 +32,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 // MongoDB URL в .env поместил:
 // mongoose.connect(MONGO_URI, {
 //   useNewUrlParser: true,
-// });
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '64863f8b1e71d6c164ddbd1a', // вставьте сюда _id созданного в предыдущем пункте пользов
-//   };
-//   next();
 // });
 
 app.post('/signup', celebrate({
