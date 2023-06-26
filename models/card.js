@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('validator'); // импортируем validator
+const isUrl = require('validator/lib/isURL');
+// const validator = require('validator'); // импортируем validator
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,7 +13,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (isValid) => validator.isURL(isValid),
+      validator: (isValid) => isUrl(isValid),
       message: 'Почта введена не корректно',
     },
   },
