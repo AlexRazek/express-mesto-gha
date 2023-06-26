@@ -52,21 +52,21 @@ const deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (card) {
-        return res.status(SUCCESS).send({ card });
-      } if (!card) {
+      if (!card) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       } if (card.owner !== req.user._id) {
         next(new Forbidden('Попытка удалить чужую карточку'));
       }
-      // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
+      return res.status(SUCCESS).send({ card });
     })
     // .then((card) => {
     //   if (card) {
     //     return res.status(SUCCESS).send({ card });
+    //   } if (!card) {
+    //     next(new NotFoundError('Карточка с указанным _id не найдена'));
+    //   } if (card.owner !== req.user._id) {
+    //     next(new Forbidden('Попытка удалить чужую карточку'));
     //   }
-    //   next(new NotFoundError('Карточка с указанным _id не найдена'));
-    //   // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
     // })
     .catch((err) => {
       if (err.name === 'CastError') {

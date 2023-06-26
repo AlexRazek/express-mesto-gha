@@ -16,18 +16,6 @@ const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 const ConflictRequest = require('../utils/errors/conflict-request-error');
 
-// function catchResponse(err, res, next) {
-//   if (err.name === 'ValidationError') {
-//     next(new BadRequestError('Переданы некорректные данные для обновления аватара/профиля'));
-//     // return res.status(BAD_REQUEST).send({
-//     //   message: 'Переданы некорректные данные для обновления аватара/профиля',
-//     // });
-//   } else {
-//     next(err);
-//   }
-//   // return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-// }
-
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(SUCCESS).send(users));
