@@ -2,14 +2,18 @@ const { celebrate, Joi } = require('celebrate');
 const routerUser = require('express').Router();
 // eslint-disable-next-line no-useless-escape
 const urlPattern = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+
 const {
   getUsers,
+  getUserMe,
   getUserById,
   updateUserProfile,
   updateUserAvatar,
 } = require('../controllers/users');
 
 routerUser.get('/', getUsers);
+
+routerUser.get('/me', getUserMe);
 
 routerUser.get('/:userId', celebrate({
   params: Joi.object().keys({

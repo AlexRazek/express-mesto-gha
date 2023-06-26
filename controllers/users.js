@@ -33,23 +33,27 @@ const getUsers = (req, res) => {
     .then((users) => res.status(SUCCESS).send(users));
 };
 
+const getUserMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError('Пользователь не найден'));
+      }
+      return res.status(SUCCESS).send(user);
+    })
+    .catch(next);
+};
+
 const getUserById = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Пользователь по указанному _id не найден'));
-      // return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res.status(SUCCESS).send(user);
     })
     .catch(next);
-  // if (err.name === 'CastError') {
-  // throw new BadRequestError('Передан неверный тип _id');
-  //     return res.status(BAD_REQUEST).send({ message: 'Передан неверный тип _id' });
-  //   }
-  //  return res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 const login = (req, res, next) => {
@@ -160,6 +164,7 @@ const updateUserAvatar = (req, res, next) => {
 
 module.exports = {
   getUsers,
+  getUserMe,
   getUserById,
   createUser,
   updateUserProfile,
