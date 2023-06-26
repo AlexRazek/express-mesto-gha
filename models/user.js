@@ -1,7 +1,9 @@
 /* eslint-disable max-len */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
-const validator = require('validator'); // импортируем validator
+// const validator = require('validator'); // импортируем validator
+const isUrl = require('validator/lib/isURL');
+const isEmail = require('validator/lib/isEmail');
 // const urlPattern = require('../utils/pattern/url-pattern');
 
 const userSchema = new mongoose.Schema({
@@ -24,7 +26,7 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (isValid) => validator.isUrl(isValid),
+      validator: (isValid) => isUrl(isValid),
       // validator(v) {
       //   return urlPattern.test(v);
       // },
@@ -36,7 +38,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
     validate: {
-      validator: (isValid) => validator.isEmail(isValid),
+      validator: (isValid) => isEmail(isValid),
       // validator(v) {
       //   return /^\S+@\S+\.\S+$/.test(v);
       // },
