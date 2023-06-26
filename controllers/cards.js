@@ -49,13 +49,13 @@ const createCard = (req, res, next) => {
 
 // удаление карточки и запрет на удаление не своей карточки
 const deleteCardById = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {
-        return next(new NotFoundError('Карточка с указанным _id не найдена'));
-      } if (card.owner !== req.user._id) {
-        return next(new Forbidden('Попытка удалить чужую карточку'));
+        next(new NotFoundError('Карточка с указанным _id не найдена'));
+      } if (req.user._id === card.owner) {
+        next(new Forbidden('Попытка удалить чужую карточку'));
       }
       return Card.findByIdAndRemove(req.params.cardId)
         .then(() => res.status(SUCCESS).send({ card }))
