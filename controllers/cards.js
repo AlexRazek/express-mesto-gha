@@ -53,9 +53,9 @@ const deleteCardById = (req, res, next) => {
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Карточка с указанным _id не найдена'));
+        return next(new NotFoundError('Карточка с указанным _id не найдена'));
       } if (card.owner !== req.user._id) {
-        next(new Forbidden('Попытка удалить чужую карточку'));
+        return next(new Forbidden('Попытка удалить чужую карточку'));
       }
       return card.remove()
         .then(() => res.status(SUCCESS).send({ card }));
