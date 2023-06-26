@@ -57,7 +57,7 @@ const deleteCardById = (req, res, next) => {
       } if (card.owner !== req.user._id) {
         return next(new Forbidden('Попытка удалить чужую карточку'));
       }
-      return card.remove()
+      return Card.findByIdAndRemove(req.params.cardId)
         .then(() => res.status(SUCCESS).send({ card }));
     })
     // .then((card) => {
