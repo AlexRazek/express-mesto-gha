@@ -53,7 +53,13 @@ const getUserById = (req, res, next) => {
       }
       return res.status(SUCCESS).send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные _id'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const login = (req, res, next) => {
