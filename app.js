@@ -10,7 +10,7 @@ const auth = require('./middlewares/auth');
 const NotFoundError = require('./utils/errors/not-found-error');
 const urlPattern = require('./utils/pattern/url-pattern');
 
-const { PORT } = process.env;
+const { PORT, MONGO_URI } = process.env;
 
 const app = express();
 
@@ -25,14 +25,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // connect оставил как есть, т.к. из .env тесты не видят mondoDB URL
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-});
-
-// MongoDB URL в .env поместил:
-// mongoose.connect(MONGO_URI, {
+// mongoose.connect('mongodb://localhost:27017/mestodb', {
 //   useNewUrlParser: true,
 // });
+
+// MongoDB URL в .env поместил:
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+});
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({

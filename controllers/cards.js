@@ -6,28 +6,11 @@ const BadRequestError = require('../utils/errors/bad-request-error');
 const NotFoundError = require('../utils/errors/not-found-error');
 const Forbidden = require('../utils/errors/forbidden');
 
-// function thenResponse(card, err, next) {
-//   if (!card) {
-//     next(new NotFoundError('Передан несуществующий _id карточки'));
-//   } else {
-//     next(err);
-//   }
-// }
-
-// function catchResponse(err, next) {
-//   if (err.name === 'CastError') {
-//     next(new BadRequestError('Переданы некорректные данные для постановки/снятия лайка'));
-//   }
-//   next(err);
-// }
-
 // получение списка карточек
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(SUCCESS).send(cards))
     .catch(next);
-  //   res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
-  // });
 };
 
 // создание карточки
@@ -54,8 +37,7 @@ const deleteCardById = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
-      } if (!card.owner.equals(req.user._id)) {
-      // } if (req.user._id !== card.owner) {
+      } if (req.user._id !== card.owner.toString()) {
         next(new Forbidden('Попытка удалить чужую карточку'));
       }
       return Card.findByIdAndRemove(req.params.cardId)
