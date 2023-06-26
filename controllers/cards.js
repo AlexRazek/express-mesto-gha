@@ -21,6 +21,7 @@ const Forbidden = require('../utils/errors/forbidden');
 //   next(err);
 // }
 
+// получение списка карточек
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(SUCCESS).send(cards))
@@ -29,6 +30,7 @@ const getCards = (req, res, next) => {
   // });
 };
 
+// создание карточки
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
@@ -45,6 +47,7 @@ const createCard = (req, res, next) => {
     });
 };
 
+// удаление карточки и запрет на удаление не своей карточки
 const deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     // eslint-disable-next-line consistent-return
@@ -54,7 +57,7 @@ const deleteCardById = (req, res, next) => {
       } else if (card.owner !== req.user._id) {
         next(new Forbidden('Попытка удалить чужую карточку'));
       } else {
-        next();
+        return res.status(SUCCESS).send({ card });
       }
       // return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
     })
@@ -76,6 +79,7 @@ const deleteCardById = (req, res, next) => {
   // });
 };
 
+// установка лайка
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -99,6 +103,7 @@ const likeCard = (req, res, next) => {
   // });
 };
 
+// удаление лайка
 const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
