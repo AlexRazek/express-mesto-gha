@@ -101,8 +101,8 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictRequest('При регистрации указан email, который уже существует на сервере'));
-      // } else if (err.name === 'ValidationError') {
-      //   next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
       }
