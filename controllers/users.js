@@ -5,7 +5,8 @@ const { CREATED, SUCCESS } = require('../utils/success');
 
 const SALT_ROUNDS = 10;
 
-const { JWT_SECRET } = process.env;
+// eslint-disable-next-line max-len
+const { JWT_SECRET = 'secret-code' } = process.env;
 
 const User = require('../models/user');
 const BadRequestError = require('../utils/errors/bad-request-error');
