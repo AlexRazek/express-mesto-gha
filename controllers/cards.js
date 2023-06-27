@@ -36,11 +36,13 @@ const deleteCardById = (req, res, next) => {
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Карточка с указанным _id не найдена'));
-      } if (req.user._id !== card.owner.toString()) {
-        next(new Forbidden('Попытка удалить чужую карточку'));
+        return next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
-      return Card.findByIdAndRemove(req.params.cardId)
+      if (req.user._id !== card.owner.toString()) {
+        return next(new Forbidden('Попытка удалить чужую карточку'));
+      }
+      // return Card.findByIdAndRemove(req.params.cardId)
+      return Card.deleteOne(card)
         .then(() => res.status(SUCCESS).send({ card }))
         .catch(next);
     })
