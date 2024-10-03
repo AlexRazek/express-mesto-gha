@@ -1,6 +1,6 @@
 # Проект Mesto фронтенд + бэкенд
 
- Стек:
+## Стек
 - Node
 - Express
 - MongoDB (Mongoose)
@@ -9,6 +9,8 @@
 - ESLINT
 - EDITCONFIG
 - GIT
+
+
 ## Директории
 
 `/routes` — папка с файлами роутера  
@@ -19,7 +21,3 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
-
-ссылка на GIT репозиторий:
-https://github.com/AlexRazek/express-mesto-gha
-
